@@ -1,0 +1,48 @@
+name: Vivado Build
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  simulation:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install Icarus Verilog
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y iverilog
+
+    - name: Run Simulation
+      run: |
+        chmod +x run.sh
+        ./run.sh --sim
+
+  build-bitstream:
+    runs-on: [self-hosted, linux, xilinx]
+    needs: simulation
+    
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Run Vivado Build
+      run: |
+        cd fpga/xilinx
+        vivado -mode batch -source build.tcl
+
+    - name: Find Bitstream
+      id: find-bitstream
+      run: |
+        BITSTREAM_PATH=$(find output -name "*.bit" | head -n 1)
+        echo "BITSTREAM_PATH=$BITSTREAM_PATH" >> $GITHUB_ENV
+
+    - name: Upload Bitstream Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: blinky_bitstream
+        path: ${{ env.BITSTREAM_PATH }}

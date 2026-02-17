@@ -1,0 +1,9 @@
+/build
+/output/*.bit
+
+/fpga/xilinx/*.jou
+/fpga/xilinx/*.log
+/fpga/xilinx/.Xil
+
+*.jou
+*.log

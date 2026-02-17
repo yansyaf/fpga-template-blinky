@@ -1,0 +1,38 @@
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+
+# Virtual environment
+venv/
+env/
+.venv/
+
+# Cocotb generated
+results.xml
+sim_build/
+
+# ModelSim generated
+work/
+transcript
+*.wlf
+*.vstf
+*.ucdb
+*.log
+vsim.wlf
+modelsim.ini
+
+# Coverage
+coverage_html/
+*.cov
+
+# Waveforms
+*.vcd
+*.fst
+*.ghw
+
+# Backup files
+*~
+*.bak
+*.swp

@@ -1,0 +1,6 @@
+set PROJECT_NAME "blinky_cora_z7_07s"
+set TOP_MODULE "blinky"
+set PART "xc7z007sclg400-1"
+set XDC_FILE "Cora-Z7-07S-Master.xdc"
+set PROJECT_DIR "../../build/vivado_project"
+set OUTPUT_DIR "../../output"
