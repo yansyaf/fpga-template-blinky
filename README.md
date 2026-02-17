@@ -1,10 +1,10 @@
-# FPGA Blinky Project for Cora Z7-07S
+# FPGA Blinky Template
 
-This project implements a simple LED blinky on the Digilent Cora Z7-07S FPGA board.
+This repository is a reusable FPGA blinky template with Vivado build/program scripts, cocotb simulation, and CI/CD integration.
 
 ## Prerequisites
 
-- Xilinx Vivado Design Suite with Zynq-7000
+- Xilinx Vivado Design Suite (version compatible with your target FPGA)
 - (Optional) Icarus Verilog for simulation
 - (Optional) Python 3.7+ with python3-venv for testbench
 
@@ -44,38 +44,40 @@ The project and bitstream will be created in `output` directory.
 
 ## Hardware Setup
 
-### Connecting the Cora Z7-07S Board
-
-1. **USB Connection:**
-   - Connect the board using the **micro-USB port labeled "PROG UART"** (the port closest to the edge)
-   - This single USB connection provides both JTAG programming and UART communication
-
-2. **Power the Board:**
-   - Use the onboard power switch to turn on the board, OR
-   - Connect a 5V power supply to the barrel jack labeled "POWER"
-   - The power LED should illuminate when powered
-
-3. **Verify USB Connection:**
-   ```bash
-   lsusb | grep -i digilent
-   ```
-   You should see a Digilent device (e.g., "Digilent Adept USB Device")
-
-4. **Install Digilent Cable Drivers** (first time only):
-   ```bash
-   cd /opt/Xilinx/Vivado/*/data/xicom/cable_drivers/lin64/install_script/install_drivers
-   sudo ./install_drivers
-   ```
-   Note: Replace `*` with your Vivado version (e.g., `2023.2`)
+1. Connect your FPGA board to your host machine (typically USB/JTAG).
+2. Power on the board.
+3. Ensure cable drivers and board files are installed for your platform/vendor.
+4. Verify your board is visible to Vivado Hardware Manager.
 
 ### Program Device
-To program the Cora Z7-07S board (after completing Hardware Setup above):
+To program your board (after completing Hardware Setup above):
 1. Ensure your board is connected and powered on.
 2. Run:
 ```bash
 ./run.sh --program
 ```
-3. Observe **LED 0** (Red) blinking.
+3. Observe the configured LED output blinking.
+
+### Example: Cora Z7-07S
+
+If you use Digilent Cora Z7-07S:
+
+1. Connect the board using the micro-USB port labeled `PROG UART`.
+2. Power using the onboard switch or a 5V barrel supply.
+3. Verify connection:
+   ```bash
+   lsusb | grep -i digilent
+   ```
+4. Install Digilent cable drivers (first time only):
+   ```bash
+   cd /opt/Xilinx/Vivado/*/data/xicom/cable_drivers/lin64/install_script/install_drivers
+   sudo ./install_drivers
+   ```
+5. Program:
+   ```bash
+   ./run.sh --program
+   ```
+6. Observe LED0 blinking.
 
 ### Run Simulation
 To run the PyUVM testbench with Icarus Verilog:
