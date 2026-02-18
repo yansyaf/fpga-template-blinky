@@ -1,0 +1,22 @@
+services:
+  bitstream-runner:
+    image: ${GH_BITSTREAM_RUNNER_IMAGE:?Set GH_BITSTREAM_RUNNER_IMAGE in .env}
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: fpga-gha-bitstream-runner
+    restart: unless-stopped
+    environment:
+      GH_RUNNER_URL: ${GH_RUNNER_URL}
+      GH_RUNNER_TOKEN: ${GH_RUNNER_TOKEN}
+      GH_RUNNER_NAME: ${GH_BITSTREAM_RUNNER_NAME:-fpga-bitstream-runner}
+      GH_RUNNER_LABELS: ${GH_BITSTREAM_RUNNER_LABELS:-self-hosted,linux,xilinx}
+      GH_RUNNER_WORKDIR: ${GH_RUNNER_WORKDIR:-_work}
+    volumes:
+      - /run/udev:/run/udev:ro
+      - bitstream-runner-work:/home/runner/actions-runner/_work
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ${GH_BITSTREAM_RUNNER_XILINX_HOST_DIR:-/opt/Xilinx}:/opt/Xilinx:ro
+
+volumes:
+  bitstream-runner-work:

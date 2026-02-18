@@ -1,0 +1,7 @@
+# Keep Docker build context minimal
+*
+
+# Files required to build runner image
+!Dockerfile
+!entrypoint.sh
+!.dockerignore

@@ -107,10 +107,23 @@ See [test/sim/README.md](test/sim/README.md) for detailed simulation documentati
 
 GitHub Actions workflow is defined in [.github/workflows/ci.yml](.github/workflows/ci.yml).
 
-- **simulation** job runs first on `ubuntu-latest` using Icarus Verilog (`./run.sh --sim`)
+- **simulation** job runs first on GitHub-hosted `ubuntu-24.04`
 - **build-bitstream** job runs only after simulation passes (`needs: simulation`)
-- Bitstream is built on self-hosted runner labels: `self-hosted`, `linux`, `xilinx`
+- **build-bitstream** runs on self-hosted labels `self-hosted`, `linux`, `xilinx`
 - Generated `.bit` file from `output/` is uploaded as artifact `blinky_bitstream`
+
+### Dockerized self-hosted runner
+
+To run bitstream CI jobs without installing Vivado/toolchain manually on each host, use the Docker runner package in [.github/runner/README.md](.github/runner/README.md).
+
+Quick start:
+```bash
+cd .github/runner
+cp .env.example .env
+docker compose up -d
+```
+
+Then configure `GH_BITSTREAM_RUNNER_IMAGE`, `GH_RUNNER_URL`, and `GH_RUNNER_TOKEN` in `.env`.
 
 ### Clean Build Files
 To clean all build and simulation artifacts:

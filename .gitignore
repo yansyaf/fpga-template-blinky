@@ -7,3 +7,6 @@
 
 *.jou
 *.log
+
+.github/runner/.env
+.github/runner/*.bin
