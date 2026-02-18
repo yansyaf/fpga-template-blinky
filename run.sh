@@ -26,7 +26,13 @@ case "$1" in
     --build)
         echo "Starting Vivado Build..."
         cd "$VIVADO_DIR"
-        vivado -mode batch -source build.tcl
+        export AP_ENABLE_WEBTALK=0
+        export MALLOC_CHECK_=0
+        export MALLOC_PERTURB_=0
+        if [ -f /usr/lib/x86_64-linux-gnu/libudev.so.0 ]; then
+            export LD_PRELOAD="/usr/lib/x86_64-linux-gnu/libudev.so.0${LD_PRELOAD:+:$LD_PRELOAD}"
+        fi
+        vivado -mode batch -nojournal -nolog -notrace -source build.tcl
         ;;
     --program)
         echo "Programming FPGA..."

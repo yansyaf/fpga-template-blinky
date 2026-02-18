@@ -1,7 +1,7 @@
 # Build script for Cora Z7-07S Blinky Project
 
 # Disable WebTalk to avoid USB enumeration crashes in containers
-config_webtalk -user off
+catch {config_webtalk -user off}
 
 # Source configuration file
 set script_dir [file dirname [file normalize [info script]]]
