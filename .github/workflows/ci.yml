@@ -8,7 +8,7 @@ on:
 
 jobs:
   simulation:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
     - uses: actions/checkout@v4
@@ -32,8 +32,8 @@ jobs:
 
     - name: Run Vivado Build
       run: |
-        cd fpga/xilinx
-        vivado -mode batch -source build.tcl
+        chmod +x run.sh
+        ./run.sh --build
 
     - name: Find Bitstream
       id: find-bitstream
