@@ -116,14 +116,19 @@ GitHub Actions workflow is defined in [.github/workflows/ci.yml](.github/workflo
 
 To run bitstream CI jobs without installing Vivado/toolchain manually on each host, use the Docker runner package in [.github/runner/README.md](.github/runner/README.md).
 
-Quick start:
+Copy and edit environment variable:
 ```bash
 cd .github/runner
 cp .env.example .env
-docker compose up -d
 ```
 
-Then configure `GH_BITSTREAM_RUNNER_IMAGE`, `GH_RUNNER_URL`, and `GH_RUNNER_TOKEN` in `.env`.
+Then configure `GH_BITSTREAM_RUNNER_IMAGE`, `GH_RUNNER_URL`, and `GH_RUNNER_TOKEN` and any variable needed in `.env`.
+
+### Start the self-hosted runner
+
+```bash
+docker compose up -d
+```
 
 ### Clean Build Files
 To clean all build and simulation artifacts:
