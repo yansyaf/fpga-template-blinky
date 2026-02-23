@@ -16,7 +16,7 @@ puts "Available devices: $devices"
 # Look for the xc7z device (FPGA), not arm_dap
 set fpga_device ""
 foreach dev $devices {
-    if {[string match $PART $dev]} {
+    if {[string match "${PART}*" [string tolower $dev]]} {
         set fpga_device $dev
         break
     }
@@ -34,7 +34,7 @@ current_hw_device $fpga_device
 refresh_hw_device -update_hw_probes false $fpga_device
 
 # Find the bitstream - use absolute path
-set project_root [file normalize [file join $script_dir "../.."]]
+set project_root [file normalize [file join $script_dir "."]]
 set bitstream_path [file join $project_root $OUTPUT_DIR "${PROJECT_NAME}.bit"]
 
 puts "Looking for bitstream at: $bitstream_path"
