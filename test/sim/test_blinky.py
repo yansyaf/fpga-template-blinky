@@ -12,6 +12,7 @@ from cocotb.clock import Clock
 from cocotb.triggers import RisingEdge, Timer
 from pyuvm import *
 import random
+import vsc
 
 # PyUVM constants
 try:
@@ -42,6 +43,28 @@ class BlinkyItem(uvm_sequence_item):
         
     def __str__(self):
         return f"BlinkyItem(rst={self.rst}, led={self.led}, counter={self.counter_value})"
+
+
+@vsc.covergroup
+class BlinkyCoverage:
+    def __init__(self):
+        self.with_sample(
+            dict(
+                rst=vsc.bit_t(1),
+                led=vsc.bit_t(1),
+                counter_msb=vsc.bit_t(1),
+                overflow=vsc.bit_t(1),
+            )
+        )
+
+        self.cp_rst = vsc.coverpoint(self.rst, bins={"rst": vsc.bin_array([], [0, 1])})
+        self.cp_led = vsc.coverpoint(self.led, bins={"led": vsc.bin_array([], [0, 1])})
+        self.cp_counter_msb = vsc.coverpoint(
+            self.counter_msb,
+            bins={"counter_msb": vsc.bin_array([], [0, 1])}
+        )
+        self.cp_overflow = vsc.coverpoint(self.overflow, bins={"overflow": vsc.bin(1)})
+        self.cp_led_counter_cross = vsc.cross([self.cp_led, self.cp_counter_msb])
 
 
 # Driver: drives reset signal and monitors DUT
@@ -85,10 +108,12 @@ class BlinkyMonitor(uvm_component):
 class BlinkyScoreboard(uvm_subscriber):
     def build_phase(self):
         super().build_phase()
+        self.counter_max = (1 << 27) - 1
         self.expected_led = 0
         self.checks_passed = 0
         self.checks_failed = 0
         self.prev_counter = None
+        self.cov = BlinkyCoverage()
         
         # Coverage tracking
         self.reset_seen = False
@@ -98,12 +123,20 @@ class BlinkyScoreboard(uvm_subscriber):
         
     def write(self, item):
         """Check the monitored transaction"""
+        overflow_event = int(self.prev_counter == self.counter_max and item.counter_value == 0)
+
+        self.cov.sample(
+            item.rst,
+            item.led,
+            (item.counter_value >> 26) & 1,
+            overflow_event,
+        )
         
         # Track coverage
         if item.rst == 1:
             self.reset_seen = True
             self.prev_counter = None
-        elif self.prev_counter == 0x7FFFFFF and item.counter_value == 0:
+        elif overflow_event:
             self.counter_overflow_seen = True
             
         # Expected LED value
@@ -149,6 +182,15 @@ class BlinkyScoreboard(uvm_subscriber):
         ]
         coverage = (sum(coverage_items) / len(coverage_items)) * 100
         self.logger.info(f"\nFunctional Coverage: {coverage:.1f}%")
+        self.logger.info(f"PyVSC Functional Coverage: {self.cov.get_coverage():.1f}%")
+
+        coverage_file = "pyvsc_coverage.txt"
+        with open(coverage_file, "w", encoding="utf-8") as cov_fp:
+            vsc.report_coverage(fp=cov_fp, details=True)
+        self.logger.info(f"PyVSC coverage report saved to: {coverage_file}")
+
+        self.logger.info("PyVSC coverage summary:")
+        vsc.report_coverage(details=True)
         self.logger.info("=" * 60)
         
         if self.checks_failed > 0:

@@ -36,3 +36,5 @@ coverage_html/
 *~
 *.bak
 *.swp
+
+pyvsc_coverage.txt

@@ -1,4 +1,5 @@
 # Python requirements for PyUVM testbench
 cocotb>=1.8.0
 pyuvm>=2.8.0
+pyvsc>=0.9.4
 pytest>=7.0.0
